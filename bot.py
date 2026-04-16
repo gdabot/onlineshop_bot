@@ -1,6 +1,6 @@
 import os
 import asyncio
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, Bot
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
 from dotenv import load_dotenv
 
@@ -24,7 +24,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
-    await query.answer()
+
+    try:
+        await query.answer("Processing...")
+    except:
+        pass
 
     if query.data == "yes":
         keyboard = [
@@ -38,19 +42,26 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_markup=reply_markup
         )
 
-        await asyncio.sleep(120)
-
-        await query.message.reply_text(
-            "💎 VIP ACCESS AVAILABLE\n\n"
-            "💰 High accuracy premium tips\n"
-            "📩 Message admin to join VIP now!"
-        )
+        context.application.create_task(send_followup(query.message.chat_id))
 
     else:
         await query.message.reply_text(
             "👍 No problem!\n\n"
             "You can join later anytime when you're ready."
         )
+
+async def send_followup(chat_id):
+    try:
+        await asyncio.sleep(120)
+        bot = Bot(token=BOT_TOKEN)
+        await bot.send_message(
+            chat_id=chat_id,
+            text="💎 VIP ACCESS AVAILABLE\n\n"
+                 "💰 High accuracy premium tips\n"
+                 "📩 Message admin to join VIP now!"
+        )
+    except Exception as e:
+        print("Follow-up error:", e)
 
 def main():
     app = ApplicationBuilder().token(BOT_TOKEN).build()
