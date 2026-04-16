@@ -62,5 +62,5 @@ def main():
     print("Bot is running...")
     app.run_polling()
 
-if __name__ == "__bot__":
-    bot()
+if __name__ == "__main__":
+    main()
