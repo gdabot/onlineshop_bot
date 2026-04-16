@@ -38,7 +38,6 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_markup=reply_markup
         )
 
-        # Follow-up after 2 minutes
         await asyncio.sleep(120)
 
         await query.message.reply_text(
